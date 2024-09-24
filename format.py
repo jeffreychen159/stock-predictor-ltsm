@@ -114,10 +114,10 @@ q_90 = int(len(dates) * .9)
 q_95 = int(len(dates) * .95)
 
 # Data for training
-dates_train, X_train, y_train = dates[:q_90], X[:q_90], y[:q_90]
+dates_train, X_train, y_train = dates[:q_80], X[:q_80], y[:q_80]
 
 # Data for validating
-dates_val, X_val, y_val = dates[q_90:], X[q_90:], y[q_90:]
+dates_val, X_val, y_val = dates[q_80:q_95], X[q_80:q_95], y[q_80:q_95]
 
 # Data for testing
 dates_test, X_test, y_test = dates[q_95:], X[q_95:], y[q_95:]
