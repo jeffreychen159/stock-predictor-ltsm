@@ -3,6 +3,7 @@ from tensorflow import keras
 from tensorflow.keras.models import Sequential  #removed python from each layer
 from tensorflow.keras import layers
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras import regularizers
 
 import datetime
 
@@ -12,18 +13,62 @@ import format
 
 import numpy as np
 
-model = Sequential([layers.Input((12, 1)),
-                    layers.LSTM(64),
-                    layers.Dense(32, activation='relu'),
-                    layers.Dense(32, activation='relu'),
-                    layers.Dense(16, activation='relu'),
-                    layers.Dense(1)])
+from tensorflow.keras.callbacks import EarlyStopping
+
+from tensorflow.keras.callbacks import ReduceLROnPlateau
+
+# 1. Stack more LSTM layers to capture hierarchical time dependencies.
+# 2. Increase sequence length to capture longer-term dependencies.
+# 3. Use Bidirectional LSTMs to capture both forward and backward temporal dependencies.
+# 4. Add Dropout layers for regularization to avoid overfitting.
+# 5. Ensure your data is normalized or standardized.
+# 6. Try using GRUs for faster training and fewer parameters.
+# 7. Add L2 regularization to prevent overfitting in Dense layers.
+# 8. Experiment with LeakyReLU or other activations.
+# 9. Use a learning rate scheduler to reduce the learning rate during training.
+# 10. Tune hyperparameters like batch size, optimizer, and the number of LSTM units.
+
+model = Sequential([
+    layers.Input(shape=(12, 1)),
+    # layers.Bidirectional(layers.LSTM(128, return_sequences=True)),
+    # layers.Bidirectional(layers.LSTM(64)),
+    # layers.Bidirectional(layers.LSTM(32)),
+    # layers.GRU(64),  # Replacing LSTM with GRU
+    # layers.GRU(32),
+    # layers.Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.001)),  # punishes higher weights
+    # layers.Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
+    layers.LSTM(16, return_sequences=True), 
+    layers.Dense(16, activation='relu'),
+    layers.LSTM(32, return_sequences=True), 
+    layers.Dense(32, activation='relu'), 
+    layers.LSTM(64), 
+    layers.Dense(64, activation='relu'), 
+    layers.Dense(32, activation='relu'),
+    layers.Dense(16, activation='relu'),
+    layers.Dense(1)
+])
+
+# This seemed to run well
+    # layers.Input(shape=(12, 1)),
+    # layers.LSTM(32, return_sequences=True), 
+    # layers.Dense(32, activation='relu'), 
+    # layers.LSTM(64), 
+    # layers.Dense(64, activation='relu'), 
+    # layers.Dense(32, activation='relu'),
+    # layers.Dense(16, activation='relu'),
+    # layers.Dense(1)
+
+model.summary()
 
 model.compile(loss='mse', 
               optimizer=Adam(learning_rate=0.0001),
               metrics=['mean_absolute_error'])
 
-model.fit(format.X_train, format.y_train, validation_data=(format.X_val, format.y_val), epochs=300)
+early_stopping = EarlyStopping(monitor='val_loss', patience=40, restore_best_weights=True)
+
+lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=15, min_lr=1e-6)
+
+model.fit(format.X_train, format.y_train, validation_data=(format.X_val, format.y_val), epochs=1000, batch_size=16, callbacks=[early_stopping])
 
 train_predictions = model.predict(format.X_train).flatten()
 
