@@ -1,11 +1,13 @@
 import datetime
 
+# Changes a str of date to datetime
 def str_to_datetime(s): 
     split = s.split('-')
     year, month, day = int(split[0]), int(split[1]), int(split[2])
     
     return datetime.datetime(year=year, month=month, day=day)
 
+# Changes a string of date and time to datetime
 def time_to_datetime(s): 
     split = s.split(' ')
     date = split[0]
