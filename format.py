@@ -4,6 +4,7 @@ import numpy as np
 import datetime
 import util
 
+# Formats the csv for windowing -----------------------------
 df = pd.read_csv('data.csv')
 
 df = df[['Date', 'Close', 'Volume']]
@@ -12,23 +13,8 @@ df['Date'] = df['Date'].apply(util.str_to_datetime)
 df.index = df.pop('Date')
 # print(df)
 
-
 plt.plot(df.index, df['Close'])
-
-# plt.show()
-
-# df = pd.read_csv('data.csv')
-
-# df = df[['Datetime', 'Close']]
-# df['Datetime'] = df['Datetime'].apply(util.time_to_datetime)
-
-# df.index = df.pop('Datetime')
-# print(df)
-
-
-# plt.plot(df.index, df['Close'])
-
-
+# -----------------------------------------------------------
 
 # Takes data and shapes sets the target, and the last three days to create a supervised training data set
 def df_to_windowed_df(dataframe, first_date, last_date, n=9):
@@ -96,8 +82,10 @@ def windowed_df_to_date_X_y(windowed_df):
     
     return dates, X.astype(np.float32), Y.astype(np.float32)
 
-# Make sure the last date is the last data of the data or it won't work
+
+
 print("Windowing df ...")
+# Make sure the last date is the last data of the data or it won't work
 windowed_df = df_to_windowed_df(df, datetime.datetime(1990, 1, 15), datetime.datetime(2024, 9, 20))
 print(windowed_df)
 print("Finished windowing")
@@ -108,7 +96,7 @@ print("Process finished")
 
 print(dates.shape, X.shape, y.shape)
 
-
+# Breaking up the function into chunks for training
 q_80 = int(len(dates) * .8)
 q_90 = int(len(dates) * .9)
 q_95 = int(len(dates) * .95)
@@ -122,11 +110,11 @@ dates_val, X_val, y_val = dates[q_80:q_95], X[q_80:q_95], y[q_80:q_95]
 # Data for testing
 dates_test, X_test, y_test = dates[q_95:], X[q_95:], y[q_95:]
 
-plt.plot(dates_train, y_train)
-plt.plot(dates_val, y_val)
-plt.plot(dates_test, y_test)
+# plt.plot(dates_train, y_train)
+# plt.plot(dates_val, y_val)
+# plt.plot(dates_test, y_test)
 
-plt.legend(['Train', 'Validation', 'Test'])
+# plt.legend(['Train', 'Validation', 'Test'])
 
 # plt.show()
 
