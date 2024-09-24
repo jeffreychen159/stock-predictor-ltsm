@@ -41,7 +41,10 @@ model = Sequential([
     layers.Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
     layers.LSTM(32, return_sequences=True), 
     layers.Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001)), 
-    layers.LSTM(64), 
+    layers.LSTM(64, return_sequences=True), 
+    layers.Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.001)), 
+    layers.LSTM(128),
+    layers.Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.001)), 
     layers.Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.001)), 
     layers.Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
     layers.Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
@@ -64,11 +67,11 @@ model.compile(loss='mse',
               optimizer=Adam(learning_rate=0.0001),
               metrics=['mean_absolute_error'])
 
-early_stopping = EarlyStopping(monitor='val_loss', patience=200, restore_best_weights=True)
+early_stopping = EarlyStopping(monitor='val_loss', patience=250, restore_best_weights=True)
 
-lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=40, min_lr=1e-6)
+lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=50, min_lr=1e-6)
 
-model.fit(format.X_train, format.y_train, validation_data=(format.X_val, format.y_val), epochs=2000, batch_size=16, callbacks=[early_stopping, lr_scheduler])
+model.fit(format.X_train, format.y_train, validation_data=(format.X_val, format.y_val), epochs=2500, batch_size=16, callbacks=[early_stopping, lr_scheduler])
 
 train_predictions = model.predict(format.X_train).flatten()
 
