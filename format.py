@@ -31,9 +31,7 @@ plt.plot(df.index, df['Close'])
 
 
 # Takes data and shapes sets the target, and the last three days to create a supervised training data set
-def df_to_windowed_df(dataframe, first_date_str, last_date_str, n=9):
-  first_date = util.str_to_datetime(first_date_str)
-  last_date  = util.str_to_datetime(last_date_str)
+def df_to_windowed_df(dataframe, first_date, last_date, n=9):
 
   target_date = first_date
   
@@ -100,7 +98,7 @@ def windowed_df_to_date_X_y(windowed_df):
 
 # Make sure the last date is the last data of the data or it won't work
 print("Windowing df ...")
-windowed_df = df_to_windowed_df(df, '1990-1-15', '2024-09-20')
+windowed_df = df_to_windowed_df(df, datetime.datetime(1990, 1, 15), datetime.datetime(2024, 9, 20))
 print(windowed_df)
 print("Finished windowing")
 
