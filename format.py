@@ -17,7 +17,7 @@ plt.plot(df.index, df['Close'])
 # -----------------------------------------------------------
 
 # Takes data and shapes sets the target, and the last three days to create a supervised training data set
-def df_to_windowed_df(dataframe, first_date, last_date, n=9):
+def df_to_windowed_df(dataframe, first_date, last_date, n=3):
 
   target_date = first_date
   
@@ -77,7 +77,7 @@ def windowed_df_to_date_X_y(windowed_df):
     dates = df_as_np[:, 0]
     middle = df_as_np[:, 1:-1]
     
-    X = middle.reshape(len(dates), middle.shape[1], 1)
+    X = middle.reshape(len(dates), middle.shape[1] // 2, 2)
     Y = df_as_np[:, -1]
     
     return dates, X.astype(np.float32), Y.astype(np.float32)
@@ -86,7 +86,7 @@ def windowed_df_to_date_X_y(windowed_df):
 
 print("Windowing df ...")
 # Make sure the last date is the last data of the data or it won't work
-windowed_df = df_to_windowed_df(df, datetime.datetime(1990, 1, 15), datetime.datetime(2024, 9, 20))
+windowed_df = df_to_windowed_df(df, datetime.datetime(2010, 1, 7), datetime.datetime(2024, 9, 20))
 print(windowed_df)
 print("Finished windowing")
 
@@ -110,11 +110,6 @@ dates_val, X_val, y_val = dates[q_80:q_95], X[q_80:q_95], y[q_80:q_95]
 # Data for testing
 dates_test, X_test, y_test = dates[q_95:], X[q_95:], y[q_95:]
 
-# plt.plot(dates_train, y_train)
-# plt.plot(dates_val, y_val)
-# plt.plot(dates_test, y_test)
 
-# plt.legend(['Train', 'Validation', 'Test'])
 
-# plt.show()
 
