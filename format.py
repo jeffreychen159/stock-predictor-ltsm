@@ -19,16 +19,17 @@ plt.plot(df.index, df['Close'])
 # -----------------------------------------------------------
 
 # Takes data and shapes sets the target, and the last three days to create a supervised training data set
+# Will implement volume
 def df_to_windowed_df(dataframe, first_date, last_date, n=9):
 
   target_date = first_date
   
   dates = []
   X, Y = [], []
-  V = []
+  # V = []
 
   last_time = False
-  V = dataframe['Volume'][n:].to_numpy()
+  # V = dataframe['Volume'][n:].to_numpy()
   while True:
     df_subset = dataframe.loc[:target_date].tail(n+1)
     
@@ -49,7 +50,6 @@ def df_to_windowed_df(dataframe, first_date, last_date, n=9):
     year_month_day = next_date_str.split('-')
     year, month, day = year_month_day
     next_date = datetime.datetime(day=int(day), month=int(month), year=int(year))
-    # print(next_date)
     
     if last_time:
       break
@@ -74,35 +74,19 @@ def df_to_windowed_df(dataframe, first_date, last_date, n=9):
 
 # Takes the data and reshapes it for training
 def windowed_df_to_date_X_y(windowed_df): 
-    df_as_np = windowed_df.to_numpy()
+    np_df = windowed_df.to_numpy()
     
-    dates = df_as_np[:, 0]
-    middle = df_as_np[:, 1:-1]
+    dates = np_df[:, 0]
+    middle = np_df[:, 1:-1]
     
     X = middle.reshape(len(dates), middle.shape[1], 1)
-    Y = df_as_np[:, -1]
+    Y = np_df[:, -1]
     
     return dates, X.astype(np.float32), Y.astype(np.float32)
 
-# def generate_predict_dates(start_date, days): 
-#   dates = []
-  
-#   start = util.str_to_datetime(start_date)
-  
-#   delta = timedelta(days=1)
-  
-#   for i in range(days): 
-#     day = start + i * delta
-#     if (day.weekday() < 5): 
-#       dates.append(pd.Timestamp(day.timestamp(), unit='s'))
-  
-#   return dates
-
-# future_dates = generate_predict_dates('2024-9-20', 365)
-
 print("Windowing df ...")
 # Make sure the last date is the last data of the data or it won't work
-windowed_df = df_to_windowed_df(df, datetime.datetime(1990, 1, 15), datetime.datetime(2024, 9, 20))
+windowed_df = df_to_windowed_df(df, datetime.datetime(1973, 4, 1), datetime.datetime(2024, 9, 20))
 print(windowed_df)
 print("Finished windowing")
 
@@ -114,15 +98,36 @@ print("Process finished")
 q_80 = int(len(dates) * .8)
 q_90 = int(len(dates) * .9)
 q_95 = int(len(dates) * .95)
+q_97 = int(len(dates) * .97)
+q_98 = int(len(dates) * .98)
+q_99 = int(len(dates) * .99)
+q_100 = int(len(dates))
 
 # Data for training
-dates_train, X_train, y_train = dates[:q_90], X[:q_90], y[:q_90]
+dates_train, X_train, y_train = dates[:q_95], X[:q_95], y[:q_95]
 
 # Data for validating
-dates_val, X_val, y_val = dates[q_90:q_95], X[q_90:q_95], y[q_90:q_95]
+dates_val, X_val, y_val = dates[q_95:q_98], X[q_95:q_98], y[q_95:q_98]
 
 # Data for testing
-dates_test, X_test, y_test = dates[q_95:], X[q_95:], y[q_95:]
+dates_test, X_test, y_test = dates[q_98:], X[q_98:], y[q_98:]
+
+
+def future_dates(start, days=365): 
+  dates = []
+  delta = datetime.timedelta(days=1)
+
+  for i in range(days): 
+    date = start + delta * i
+    # Checks if weekday
+    if date.weekday() < 5: 
+      dates.append(date)
+  return dates
+
+date_list = future_dates(datetime.datetime(2024, 9, 20))
+
+# Dates for Predicting
+dates_predict, X_predict, y_predict = dates, X, y
 
 
 
