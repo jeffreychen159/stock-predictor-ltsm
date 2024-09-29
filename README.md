@@ -23,7 +23,13 @@ The key components of the model architecture are:
 - Dense Layers: Connecting dense layers after each LSTM layer allows the model to extract patterns from the LSTM outputs.
 - Final Output: A final dense layer with 1 neuron predicts the close price.
 
-While the model had these 
+While the model trained using these components, it was also important to ensure that the model didn't over-train. To ensure that the model was trained optimally, hyperparameters were used such as: 
+- Early Stopping
+- Learning Rate Schedulers
+- Changing Epochs
+- Batch Size manipulation
+
+Using these hyperparameters ensures that the model is trained enough to be able to predict future patterns while ensuring that it doesn't overfit the data. 
 
 ## Conclusion
 
