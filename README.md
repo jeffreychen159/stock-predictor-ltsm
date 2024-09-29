@@ -10,9 +10,9 @@ This model takes in the date, and the historical data over a window of days, con
 
 ## Data Preparation
 
-1. Raw Data: Using yfinance, I was able to get the historical price data of a stock and use that as the input to my code. The date column and the close price were extracted, preparing it for windowing.
-2. Windowing: Data is windowed, where a window of n days is used as the input for the model.
-3. Splitting the Data: The data is split into three sets where about 80% is used for training, 15% is used for validating, and 5% is used for testing. This structure allows the model to learn from the training data and apply the pattern learned from the training data onto the validation and testing data. 
+1. **Raw Data:** Using yfinance, I was able to get the historical price data of a stock and use that as the input to my code. The date column and the close price were extracted, preparing it for windowing.
+2. **Windowing:** Data is windowed, where a window of n days is used as the input for the model.
+3. **Splitting the Data:** The data is split into three sets where about 80% is used for training, 15% is used for validating, and 5% is used for testing. This structure allows the model to learn from the training data and apply the pattern learned from the training data onto the validation and testing data. 
 
 ## Model Architecture
 
