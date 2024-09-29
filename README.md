@@ -29,7 +29,7 @@ While the model trained using these components, it was also important to ensure 
 - Changing Epochs
 - Batch Size manipulation
 
-Using these hyperparameters ensures that the model is trained enough to be able to predict future patterns while ensuring that it doesn't overfit the data. 
+Using these hyperparameters ensures that the model is trained enough to be able to predict future patterns while ensuring that it doesn't overfit the training data. 
 
 ## Conclusion
 
